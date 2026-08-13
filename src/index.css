@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-siran-50:  #f0faf1;
+  --color-siran-100: #dcf3de;
+  --color-siran-200: #bbe6c1;
+  --color-siran-300: #8dd299;
+  --color-siran-400: #57b76a;
+  --color-siran-500: #329b47;
+  --color-siran-600: #237d36;
+  --color-siran-700: #1e632d;
+  --color-siran-800: #1b4f27;
+  --color-siran-900: #174122;
+  --color-siran-950: #0b2412;
+}
+
+html {
+  /* Impede que o iOS aumente a fonte ao girar o aparelho */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  @apply bg-stone-100 text-stone-800 antialiased;
+  /* Respeita o notch e a barra de gestos dos celulares */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Campos com 16px evitam o zoom automático do Safari no foco.
+   Acima de 640px voltam a 14px, que fica melhor no desktop. */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+@media (min-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 14px;
+  }
+}
+
+/* Remove o destaque cinza do toque no Android/iOS */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}

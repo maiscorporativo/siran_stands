@@ -1,0 +1,16 @@
+node_modules
+dist
+.env
+public/uploads
+anexos_privados
+*.log
+desktop.ini
+exemplos_contrato/
+
+# Arquivos de trabalho temporários do Office (lock de documento aberto)
+~$*
+*.tmp
+mso*.tmp
+
+# Cache de build do TypeScript
+*.tsbuildinfo
