@@ -1,6 +1,10 @@
 node_modules
 dist
+
+# Nenhum arquivo de ambiente vai para o repositório — só o exemplo
 .env
+.env.*
+!.env.example
 public/uploads
 anexos_privados
 *.log
