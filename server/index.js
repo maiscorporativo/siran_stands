@@ -8,6 +8,7 @@ import standsRouter, { uploadsDir } from './routes/stands.js';
 import categoriasRouter from './routes/categorias.js';
 import reservasRouter from './routes/reservas.js';
 import assinaturasRouter from './routes/assinaturas.js';
+import setupRouter from './routes/setup.js';
 import pool from './db.js';
 import { liberarReservasExpiradas } from './reservas-lib.js';
 
@@ -34,6 +35,8 @@ app.use('/api/stands', standsRouter);
 app.use('/api/categorias', categoriasRouter);
 app.use('/api/reservas', reservasRouter);
 app.use('/api/assinaturas', assinaturasRouter);
+// Só responde quando SETUP_TOKEN está definido; caso contrário, 404
+app.use('/api/setup', setupRouter);
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
