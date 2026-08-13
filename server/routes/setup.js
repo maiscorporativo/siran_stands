@@ -17,11 +17,15 @@ const router = express.Router();
    volta a responder 404 e deixa de ser superfície de ataque. */
 
 function tokenValido(req) {
-  const esperado = process.env.SETUP_TOKEN;
+  const esperado = String(process.env.SETUP_TOKEN ?? '').trim();
   if (!esperado) return false;
 
-  const recebido = String(req.query.token ?? '');
-  // Comparação de tempo constante evita descobrir o token por tentativa
+  /* Aceita pela query ou por cabeçalho. O trim protege contra espaço
+     colado junto do valor no painel da hospedagem, que é invisível e
+     faz a comparação falhar sem explicação aparente. */
+  const recebido = String(req.query.token ?? req.headers['x-setup-token'] ?? '').trim();
+  if (!recebido) return false;
+
   const a = Buffer.from(recebido);
   const b = Buffer.from(esperado);
   return a.length === b.length && crypto.timingSafeEqual(a, b);
@@ -30,7 +34,21 @@ function tokenValido(req) {
 function exigirToken(req, res, next) {
   // Sem SETUP_TOKEN a rota simplesmente não existe
   if (!process.env.SETUP_TOKEN) return res.status(404).send('Not found');
-  if (!tokenValido(req)) return res.status(403).json({ error: 'Token inválido.' });
+
+  if (!tokenValido(req)) {
+    /* Diagnóstico sem vazar o token: só o suficiente para descobrir
+       se o valor chegou truncado ou com caractere trocado. */
+    const esperado = String(process.env.SETUP_TOKEN ?? '').trim();
+    const recebido = String(req.query.token ?? req.headers['x-setup-token'] ?? '').trim();
+    return res.status(403).json({
+      error: 'Token inválido.',
+      dica: recebido.length !== esperado.length
+        ? `O token recebido tem ${recebido.length} caracteres e o configurado tem ${esperado.length}. ` +
+          'Verifique se o valor no painel não ficou cortado ou com espaço.'
+        : 'O tamanho confere, mas o conteúdo não. Confira caractere por caractere — ' +
+          'evite / + = & no token, que atrapalham em endereços web.',
+    });
+  }
   next();
 }
 
